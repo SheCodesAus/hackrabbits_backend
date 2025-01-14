@@ -1,5 +1,5 @@
 # Your Product Name
-> Your Group Name
+> Your Group Name SheInspires
 
 > [!NOTE]
 > This repo has been shared with your group. Use it to develop your group project.
