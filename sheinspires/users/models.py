@@ -3,14 +3,14 @@ from django.db import models
 
 # Create your models here.
 
-class User(AbstractUser): 
+class CustomUser(AbstractUser): 
     USER_TYPE_CHOICES = {
         "ADMIN": "Admin",
         "ROLE_MODEL": "Role Model",
         "COMMUNITY_USER": "Community User",
     }
     user_type = models.CharField(
-        max_length=1,
+        max_length=14,
         choices=USER_TYPE_CHOICES,
         default="COMMUNITY_USER",
     )
@@ -31,9 +31,13 @@ class User(AbstractUser):
         "NT": "Northern Territory",
     }
     location = models.CharField(
-        max_length=1,
+        max_length=3,
         choices=LOCATION_CHOICES,
     )
 
     phone_number = models.CharField(max_length=10)
     linkedin = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.username
+    
