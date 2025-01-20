@@ -1,0 +1,16 @@
+[
+    {
+      "id": 1,
+      "sender": 1,
+      "recipient": 2,
+      "subject": "Career Advice",
+      "message": "Hi Michelle, I'm interested in learning more about your career journey and how you overcame challenges in the AI industry. Could you please share some advice?"
+    },
+    {
+      "id": 2,
+      "sender": 2,
+      "recipient": 1,
+      "subject": "Thank you",
+      "message": "Hello Jo, I'm happy to share my experiences and provide any guidance I can. Let's schedule a call to discuss further."
+    }
+  ]

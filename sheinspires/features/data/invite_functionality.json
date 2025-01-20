@@ -1,0 +1,20 @@
+[
+    {
+      "id": 1,
+      "inviter": 1,
+      "invitee_name": "Alexie Johnson",
+      "invitee_email": "alexie.johnson@example.com",
+      "invitee_industry": "Technology",
+      "invitee_role": "Software Engineer",
+      "why_inspiring": "Alexie has a great track record of building innovative software solutions and mentoring junior developers."
+    },
+    {
+      "id": 2,
+      "inviter": 2,
+      "invitee_name": "Sophia Lee",
+      "invitee_email": "sophia.lee@example.com",
+      "invitee_industry": "Healthcare",
+      "invitee_role": "Biotechnology Researcher",
+      "why_inspiring": "Sophia's pioneering work in gene therapy has the potential to transform the healthcare industry."
+    }
+  ]
