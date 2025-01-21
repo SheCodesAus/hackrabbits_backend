@@ -236,3 +236,16 @@ class UserLocation(models.Model):
         on_delete=models.CASCADE
         )
 
+
+
+
+# Locations
+class Location(models.Model):
+    city = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.city
+
+class UserLocation(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_locations")
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="location_users")
