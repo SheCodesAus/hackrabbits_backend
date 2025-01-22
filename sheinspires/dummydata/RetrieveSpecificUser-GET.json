@@ -1,0 +1,16 @@
+{
+    "id": 1,
+    "username": "testuser",
+    "email": "testuser@example.com",
+    "first_name": "Test",
+    "last_name": "User",
+    "image": "https://example.com/profile.jpg",
+    "current_role": "Software Engineer",
+    "inspiration": "I love coding!",
+    "advice": "Always keep learning!",
+    "location": "Perth",
+    "phone_number": "+61 400 123 456",
+    "linkedin": "https://linkedin.com/in/testuser",
+    "user_type": "COMMUNITY_USER"
+  }
+  
