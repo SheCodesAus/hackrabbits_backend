@@ -64,17 +64,6 @@ class UserIndustry(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_industries")
     industry = models.ForeignKey(Industry, on_delete=models.CASCADE, related_name="industry_users")
 
-# Locations
-class Location(models.Model):
-    city = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.city
-
-class UserLocation(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_locations")
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="location_users")
-
 # ROLE MODEL SPECIFIC DATA
 
 # Milestones
