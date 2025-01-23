@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import CustomUser
 
 class RoleModelSerializer(serializers.ModelSerializer):
+    categories = serializers.StringRelatedField(many=True)
+    skills = serializers.StringRelatedField(many=True)
     class Meta:
         model = CustomUser
         fields = '__all__'
