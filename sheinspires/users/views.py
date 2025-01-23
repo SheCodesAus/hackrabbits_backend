@@ -6,10 +6,12 @@ from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
-from .serializers import RoleModelSerializer
+from .serializers import RoleModelSerializer, CommunityUserSerializer
 
 # Create your views here.
-class ProfileView(APIView):
+
+# View to create and retrieve a Role Model Profile
+class RoleModelView(APIView):
   def get(self, request):
       users = CustomUser.objects.all()
       serializer = RoleModelSerializer(users, many=True)
@@ -28,6 +30,27 @@ class ProfileView(APIView):
           status=status.HTTP_400_BAD_REQUEST
       )
 
+# View to create and retrieve a Community User Profile
+class CommunityUserView(APIView):
+  def get(self, request):
+      users = CustomUser.objects.all()
+      serializer = CommunityUserSerializer(users, many=True)
+      return Response(serializer.data)
+
+  def post(self, request):
+      serializer = CommunityUserSerializer(data=request.data)
+      if serializer.is_valid():
+          serializer.save()
+          return Response(
+              serializer.data,
+              status=status.HTTP_201_CREATED
+          )
+      return Response(
+          serializer.errors, 
+          status=status.HTTP_400_BAD_REQUEST
+      )
+
+# View to retrieve details of a Profile using a primary key
 class CustomUserDetail(APIView):
   def get_object(self, pk):
       try:
@@ -35,11 +58,7 @@ class CustomUserDetail(APIView):
       except CustomUser.DoesNotExist:
           raise Http404
 
-  def get(self, request, pk):
-      user = self.get_object(pk)
-      serializer = RoleModelSerializer(user)
-      return Response(serializer.data)
-
+# View to validate user token
 class CustomAuthToken(ObtainAuthToken):
   def post(self, request, *args, **kwargs):
       serializer = self.serializer_class(
