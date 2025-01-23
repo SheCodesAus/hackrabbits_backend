@@ -86,28 +86,6 @@ class Skill(models.Model):
     def __str__(self):
         return self.name
 
-# Categories and Skills need to be predefined separately (not using CHOICES) because we want the User to be able to select multiple options
-# This cannot be done with CHOICES and must be managed in separate Models.
-
-def add_predefined_data():
-    # Predefined Categories
-    categories = [
-        "Making Friends", "Networking", "Learning Opportunities", "Attending Events", 
-        "Coffee Catch Ups", "Mentoring", "Career Advice", "Volunteering", 
-        "Speaking", "Observing"
-    ]
-    for category_name in categories:
-        Category.objects.get_or_create(name=category_name)
-    
-    # Predefined Skills
-    skills = [
-        "Web Development", "Data Analysis", "Cyber Security", "Cloud Computing", 
-        "Mobile App Development", "UX/UI Design", "Machine Learning / AI", 
-        "Dev Ops & CI/CD", "Database Management", "Software Testing", "Blockchain Technology", 
-        "Game Development", "API Development & Integration", "Technical Writing & Documentation"
-    ]
-    for skill_name in skills:
-        Skill.objects.get_or_create(name=skill_name)
 
 # # Call this function manually after running migrations
 # add_predefined_data()

@@ -4,17 +4,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .serializers import RoleModelSerializer
 
 # Create your views here.
 class CustomUserList(APIView):
   def get(self, request):
       users = CustomUser.objects.all()
-      serializer = CustomUserSerializer(users, many=True)
+      serializer = RoleModelSerializer(users, many=True)
       return Response(serializer.data)
 
   def post(self, request):
-      serializer = CustomUserSerializer(data=request.data)
+      serializer = RoleModelSerializer(data=request.data)
       if serializer.is_valid():
           serializer.save()
           return Response(
@@ -35,5 +35,5 @@ class CustomUserDetail(APIView):
 
   def get(self, request, pk):
       user = self.get_object(pk)
-      serializer = CustomUserSerializer(user)
+      serializer = RoleModelSerializer(user)
       return Response(serializer.data)
