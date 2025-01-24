@@ -14,10 +14,12 @@ class IsPublicOrReadOnly(permissions.BasePermission):
         # Allow access if the user is not authenticated (general user)
         return not request.user.is_authenticated
 
+        # return request.method in permissions.SAFE_METHODS or not request.user.is_authenticated
+
     def has_object_permission(self, request, view, obj):
         # Only allow access to role model profiles with limited details
         return obj.user_type == CustomUser.USER_TYPES["ROLE_MODEL_USER"]
-
+# ??  check this part 
 
 class IsRoleModelUser(permissions.BasePermission):
     """
@@ -29,8 +31,8 @@ class IsRoleModelUser(permissions.BasePermission):
     def has_permission(self, request, view):
         # Ensure the user is an authenticated role model user
         return (
-            request.user.is_authenticated
-            and request.user.user_type == CustomUser.USER_TYPES["ROLE_MODEL_USER"]
+            request.user.is_authenticated and
+            request.user.user_type == "ROLE_MODEL"
         )
 
     def has_object_permission(self, request, view, obj):
@@ -38,7 +40,7 @@ class IsRoleModelUser(permissions.BasePermission):
         if request.method not in permissions.SAFE_METHODS:
             return obj == request.user
         # Allow viewing community user profiles
-        return obj.user_type == CustomUser.USER_TYPES["COMMUNITY_USER"]
+        return obj.user_type == "COMMUNITY_USER"
 
 
 class IsCommunityUser(permissions.BasePermission):
@@ -52,9 +54,9 @@ class IsCommunityUser(permissions.BasePermission):
     def has_permission(self, request, view):
         # Ensure the user is an authenticated community user
         return (
-            request.user.is_authenticated
-            and request.user.user_type == CustomUser.USER_TYPES["COMMUNITY_USER"]
-        )
+            request.user.is_authenticated and
+            request.user.user_type == "COMMUNITY_USER"
+            )
 
     def has_object_permission(self, request, view, obj):
         # Allow community users to edit, delete their own profile
@@ -62,4 +64,4 @@ class IsCommunityUser(permissions.BasePermission):
             return obj == request.user
         
         # Allow viewing all role model profiles
-        return obj.user_type == CustomUser.USER_TYPES["ROLE_MODEL_USER"]
+        return obj.user_type == "ROLE_MODEL"
