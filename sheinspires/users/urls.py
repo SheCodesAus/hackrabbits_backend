@@ -33,8 +33,11 @@ urlpatterns = [
     # Public Role Model Profiles (Limited View)
     path('role-models/public/', views.PublicRoleModelListView.as_view(), name='public_role_models'),
 
+    # Public Role Model Profiles details (Limited View)
+    path('role-models/public/<int:pk>/', views.PublicRoleModelListView.as_view(), name='public_role_model_detail'),
+
     # Full Role Model Profiles (For Authenticated Users)
-    path('role-models/full/', views.FullRoleModelView.as_view(), name='full_role_models'),
+    path('role-models/', views.FullRoleModelView.as_view(), name='full_role_models'),
 
     # Role Model Profile Detail (View, Update, Delete)
     path('role-models/<int:pk>/', views.RoleModelDetail.as_view(), name='role_model_detail'),
