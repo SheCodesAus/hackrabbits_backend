@@ -10,35 +10,48 @@ from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser
 
 from rest_framework import generics, permissions
 
-# Create your views here.
+
+
+
+
+
+
+class PublicRoleModelListView(APIView):
+    permission_classes = [IsPublicOrReadOnly]
+
+    def get(self, request):
+        users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image')
+        serializer = RoleModelSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # View to create and retrieve a Role Model Profile
-class RoleModelView(APIView):
+
+class FullRoleModelView(APIView):
     
     #   non register user can only see limited version of role model profile.
     # registered user (including community user and role model users ) can see full details of profile
 
-    
-    permission_classes = [IsPublicOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        users = CustomUser.objects.filter(user_type="ROLE_MODEL")  # Filter by user type
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "You need to log in to see full details."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        users = CustomUser.objects.filter(user_type="ROLE_MODEL")
         serializer = RoleModelSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-  
+    
 
+# anyone can sign up
     def post(self, request):
+        # Allow unauthenticated users to sign up
         serializer = RoleModelSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-                )
-        return Response(
-            serializer.errors, 
-            status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer.save(user_type="ROLE_MODEL")
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RoleModelDetail(APIView):
@@ -60,6 +73,7 @@ class RoleModelDetail(APIView):
         serializer = RoleModelSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
     def put(self, request, pk):
         user = self.get_object(pk)
         serializer = RoleModelSerializer(user, data=request.data)
@@ -79,25 +93,26 @@ class CommunityUserView(APIView):
   
 #   each communti user can view their own profile, 
 #   only role models can see every community user profile 
-    permission_classes = [IsRoleModelUser]
+    permission_classes = [permissions.AllowAny]
     
     def get(self, request):
-        users = CustomUser.objects.filter(user_type="COMMUNITY_USER")  # Filter by user type
+        if not request.user.is_authenticated:
+            return Response(
+                {"error": "You need to log in to see this data."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        users = CustomUser.objects.filter(user_type="COMMUNITY_USER")
         serializer = CommunityUserSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
     def post(self, request):
+        # Allow unauthenticated users to sign up
         serializer = CommunityUserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
-                )
-        return Response(
-            serializer.errors, 
-            status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer.save(user_type="COMMUNITY_USER")
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CommunityUserDetail(APIView):
@@ -158,6 +173,12 @@ class CustomAuthToken(ObtainAuthToken):
       })
   
 
+
+
+# if i want to allow public to sign up as role model or community user what changes I need????
+      
+
+      
 
 
 
