@@ -50,7 +50,8 @@ class CustomUser(AbstractUser):
     )
     industry = models.CharField(max_length=100, choices=INDUSTRIES,blank=True,
     null=True,
-    default="SOFTWARE_ENGINEERING")
+    # default="SOFTWARE_ENGINEERING"
+    )
 
     LOCATIONS = (
         ("PERTH", "Perth"),
@@ -64,7 +65,8 @@ class CustomUser(AbstractUser):
     )
     location = models.CharField(max_length=100, choices=LOCATIONS, blank=True,
     null=True,
-    default="PERTH")
+    # default="PERTH"
+    )
 
 
 # Q BS: how about adding a line choose location as default value?
