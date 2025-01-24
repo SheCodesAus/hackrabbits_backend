@@ -9,9 +9,16 @@ class RoleModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
 
+
     def create(self, validated_data):
-        return CustomUser.objects.create_user(**validated_data)
-    
+        categories = validated_data.pop('categories', [])
+        skills = validated_data.pop('skills', [])
+        user = CustomUser.objects.create_user(**validated_data)
+        user.categories.set(categories)
+        user.skills.set(skills)
+        return user
+
+#BS added create method first exclude many to many fields from validated user after it's created they both set and be a part of the user
 
 class CommunityUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,5 +33,7 @@ class CommunityUserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        validated_data['user_type'] = CustomUser.USER_TYPES["COMMUNITY_USER"]
+        validated_data['user_type'] = "COMMUNITY_USER"
+
         return CustomUser.objects.create_user(**validated_data)
+    
