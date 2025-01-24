@@ -48,7 +48,9 @@ class CustomUser(AbstractUser):
         ("STARTUP", "Startup"),
         ("NON_PROFIT", "Non-Profit"),
     )
-    industry = models.CharField(max_length=100, choices=INDUSTRIES, default="SOFTWARE_ENGINEERING")
+    industry = models.CharField(max_length=100, choices=INDUSTRIES,blank=True,
+    null=True,
+    default="SOFTWARE_ENGINEERING")
 
     LOCATIONS = (
         ("PERTH", "Perth"),
@@ -60,7 +62,9 @@ class CustomUser(AbstractUser):
         ("BRISBANE", "Brisbane"),
         ("DARWIN", "Darwin"),
     )
-    location = models.CharField(max_length=100, choices=LOCATIONS, default="PERTH")
+    location = models.CharField(max_length=100, choices=LOCATIONS, blank=True,
+    null=True,
+    default="PERTH")
 
 
 # Q BS: how about adding a line choose location as default value?
@@ -76,13 +80,16 @@ class CustomUser(AbstractUser):
                   )
                     ],
                     )
+    
     # email = models.EmailField(unique=True) --- included in AbstractUser model
     linkedin = models.URLField(blank=True, null=True)
+
     date_joined = models.DateTimeField(auto_now_add=True)
 
     # ROLE MODEL FIELDS ONLY (but still within CustomUser class)
     # Note the Many to Many Field for Skills
     # Like Categories above, this allows users to choose multiple Skills (using a checkbox for example)
+
     milestones = models.TextField(blank=True, null=True)
     achievements = models.TextField(blank=True, null=True)
     skills = models.ManyToManyField('Skill', blank=True)
