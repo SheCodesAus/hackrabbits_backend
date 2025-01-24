@@ -1,4 +1,3 @@
-
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,9 +12,13 @@ from .serializers import RoleModelSerializer, CommunityUserSerializer
 # View to create and retrieve a Role Model Profile
 class RoleModelView(APIView):
   def get(self, request):
-      users = CustomUser.objects.all()
+      users = CustomUser.objects.filter(user_type="ROLE_MODEL")  # Filter by user type
+
+    #   users = CustomUser.objects.all()
+
       serializer = RoleModelSerializer(users, many=True)
       return Response(serializer.data)
+  
 
   def post(self, request):
       serializer = RoleModelSerializer(data=request.data)
@@ -33,7 +36,10 @@ class RoleModelView(APIView):
 # View to create and retrieve a Community User Profile
 class CommunityUserView(APIView):
   def get(self, request):
-      users = CustomUser.objects.all()
+      users = CustomUser.objects.filter(user_type="COMMUNITY_USER")  # Filter by user type
+
+    #   users = CustomUser.objects.all()
+    
       serializer = CommunityUserSerializer(users, many=True)
       return Response(serializer.data)
 
