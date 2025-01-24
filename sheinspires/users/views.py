@@ -6,6 +6,9 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
 from .serializers import RoleModelSerializer, CommunityUserSerializer
+from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser
+
+from rest_framework import generics, permissions
 
 # Create your views here.
 
@@ -13,11 +16,8 @@ from .serializers import RoleModelSerializer, CommunityUserSerializer
 class RoleModelView(APIView):
   def get(self, request):
       users = CustomUser.objects.filter(user_type="ROLE_MODEL")  # Filter by user type
-
-    #   users = CustomUser.objects.all()
-
       serializer = RoleModelSerializer(users, many=True)
-      return Response(serializer.data)
+      return Response(serializer.data, status=status.HTTP_200_OK)
   
 
   def post(self, request):
@@ -35,13 +35,13 @@ class RoleModelView(APIView):
 
 # View to create and retrieve a Community User Profile
 class CommunityUserView(APIView):
-  def get(self, request):
-      users = CustomUser.objects.filter(user_type="COMMUNITY_USER")  # Filter by user type
-
-    #   users = CustomUser.objects.all()
+  
+    permission_classes = [IsPublicOrReadOnly]
     
-      serializer = CommunityUserSerializer(users, many=True)
-      return Response(serializer.data)
+    def get(self, request):
+        users = CustomUser.objects.filter(user_type="COMMUNITY_USER")  # Filter by user type
+        serializer = CommunityUserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
   def post(self, request):
       serializer = CommunityUserSerializer(data=request.data)
