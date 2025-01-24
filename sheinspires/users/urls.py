@@ -2,10 +2,14 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('signup/', views.SignUpView.as_view(), name='signup'),  # Sign up page
-    path('login/', views.LoginView.as_view(), name='login'),  # Login page
-    path('logout/', views.LogoutView.as_view(), name='logout'),  # Logout page
-    path('invite/', views.InviteView.as_view(), name='invite'),  # Invite role model page
+
+# temporary comment out the path to sign up, it's blocking the migration and the block is not defined yet
+    # path('signup/', views.SignUpView.as_view(), name='signup'),  # Sign up page
+
+    # path('login/', views.LoginView.as_view(), name='login'),  # Login page
+
+    # path('logout/', views.LogoutView.as_view(), name='logout'),  # Logout page
+    # path('invite/', views.InviteView.as_view(), name='invite'),  # Invite role model page
     path('rolemodelprofile/<int:pk>/', views.RoleModelView.as_view(), name='profile'),  # Role Model profile page 
     path('communityuserprofile/<int:pk>/', views.CommunityUserView.as_view(), name='profile'),  # Community User profile page
 ]

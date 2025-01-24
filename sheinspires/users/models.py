@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.validators import RegexValidator
+
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -8,11 +10,19 @@ class CustomUser(AbstractUser):
         ("ROLE_MODEL", "Role Model"),
         ("COMMUNITY_USER", "Community User"),
     )
-    user_type = models.CharField(max_length=20, choices=USER_TYPES) # Do we need a default user here?
+    user_type = models.CharField(max_length=20, choices=USER_TYPES, default="COMMUNITY_USER") 
+    
+    # Q DS: Do we need a default user here? 
+    # Answer BS: default user added to avoid validation error
+
+
     # first_name = models.CharField(max_length=50) --- included in AbstractUser model
     # last_name = models.CharField(max_length=50)
+    
     image = models.URLField(blank=True, null=True)  # URL to profile image
+    
     # tagline = models.CharField(max_length=100) --- do we want to include?
+    
     current_role = models.CharField(max_length=100)
     inspiration = models.TextField(blank=True, null=True)
     advice = models.TextField(blank=True, null=True)
@@ -38,7 +48,10 @@ class CustomUser(AbstractUser):
         ("STARTUP", "Startup"),
         ("NON_PROFIT", "Non-Profit"),
     )
-    industry = models.CharField(max_length=100, choices=INDUSTRIES, default="SOFTWARE_ENGINEERING")
+    industry = models.CharField(max_length=100, choices=INDUSTRIES,blank=True,
+    null=True,
+    # default="SOFTWARE_ENGINEERING"
+    )
 
     LOCATIONS = (
         ("PERTH", "Perth"),
@@ -50,16 +63,35 @@ class CustomUser(AbstractUser):
         ("BRISBANE", "Brisbane"),
         ("DARWIN", "Darwin"),
     )
-    location = models.CharField(max_length=100, choices=LOCATIONS, default="PERTH")
+    location = models.CharField(max_length=100, choices=LOCATIONS, blank=True,
+    null=True,
+    # default="PERTH"
+    )
 
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
+
+# Q BS: how about adding a line choose location as default value?
+
+
+    phone_number = models.CharField(
+        max_length=20,
+          blank=True, null=True,
+          validators=[
+              RegexValidator(
+                  regex=r"^\+?1?\d{9,15}$",
+                  message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+                  )
+                    ],
+                    )
+    
     # email = models.EmailField(unique=True) --- included in AbstractUser model
     linkedin = models.URLField(blank=True, null=True)
+
     date_joined = models.DateTimeField(auto_now_add=True)
 
     # ROLE MODEL FIELDS ONLY (but still within CustomUser class)
     # Note the Many to Many Field for Skills
     # Like Categories above, this allows users to choose multiple Skills (using a checkbox for example)
+
     milestones = models.TextField(blank=True, null=True)
     achievements = models.TextField(blank=True, null=True)
     skills = models.ManyToManyField('Skill', blank=True)
