@@ -2,8 +2,9 @@ from rest_framework import serializers
 from .models import CustomUser, Category, Skill
 
 class RoleModelSerializer(serializers.ModelSerializer):
-    categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())
-    skills = serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all())
+    categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all(), required=False)
+    skills = serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all(), required=False)
+
 
     class Meta:
         model = CustomUser
@@ -12,6 +13,7 @@ class RoleModelSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
+        
         categories = validated_data.pop('categories', [])
         skills = validated_data.pop('skills', [])
         user = CustomUser.objects.create_user(**validated_data)
@@ -30,8 +32,10 @@ class RoleModelSerializer(serializers.ModelSerializer):
 class CommunityUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'image', 'current_role', 'location']
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'image', 'current_role', 'location', 'phone_number', 'linkedin']
+
         extra_kwargs = {
+            'password': {'write_only': True},  # Ensure password is write-only
             'first_name': {'required': True},
             'last_name': {'required': True},
             'image': {'required': True},
@@ -39,6 +43,7 @@ class CommunityUserSerializer(serializers.ModelSerializer):
             'location': {'required': True},
         }
 
+        
     def create(self, validated_data):
         validated_data['user_type'] = "COMMUNITY_USER"
 
