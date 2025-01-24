@@ -13,16 +13,41 @@ from rest_framework import generics, permissions
 
 
 
-
-
-
 class PublicRoleModelListView(APIView):
     permission_classes = [IsPublicOrReadOnly]
 
-    def get(self, request):
-        users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image')
-        serializer = RoleModelSerializer(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def get(self, request, pk=None):
+        if pk:
+            # Fetch and return limited details for a single role model profile
+            try:
+                user = CustomUser.objects.get(pk=pk, user_type="ROLE_MODEL")
+            except CustomUser.DoesNotExist:
+                raise Http404
+            limited_data = {
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "image": user.image,
+                "current_role": user.current_role,
+            }
+            return Response(limited_data, status=status.HTTP_200_OK)
+        else:
+
+            # Fetch and return the list of all role models 
+            users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image', 'current_role')
+            data = [
+                {
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "image": user.image,
+                    "current_role": user.current_role,
+                }
+                for user in users
+            ]
+            return Response(data, status=status.HTTP_200_OK)
+
+
+
 
 # View to create and retrieve a Role Model Profile
 
@@ -175,7 +200,6 @@ class CustomAuthToken(ObtainAuthToken):
 
 
 
-# if i want to allow public to sign up as role model or community user what changes I need????
       
 
       
