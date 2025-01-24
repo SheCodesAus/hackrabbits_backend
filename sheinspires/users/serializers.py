@@ -2,8 +2,9 @@ from rest_framework import serializers
 from .models import CustomUser, Category, Skill
 
 class RoleModelSerializer(serializers.ModelSerializer):
-    categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())
-    skills = serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all())
+    categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all(), required=False)
+    skills = serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all(), required=False)
+
 
     class Meta:
         model = CustomUser
@@ -12,6 +13,7 @@ class RoleModelSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
+        
         categories = validated_data.pop('categories', [])
         skills = validated_data.pop('skills', [])
         user = CustomUser.objects.create_user(**validated_data)
