@@ -4,22 +4,35 @@ from users.models import CustomUser
 
 
 class IsPublicOrReadOnly(permissions.BasePermission):
-    """
-     general user who are not signed in can see main page, 
-     can see only limited details of role model profile
+    
+    #  Allow public (unauthenticated) users to view limited details of role model profiles.
+    #  Allow registered (authenticated) users to view the full profile of role model profiles.
+    #  Only role model profiles (user_type == 'ROLE_MODEL') are accessible.
 
-    """
 
     def has_permission(self, request, view):
-        # Allow access if the user is not authenticated (general user)
-        return not request.user.is_authenticated
-
-        # return request.method in permissions.SAFE_METHODS or not request.user.is_authenticated
+        
+        #  Allow SAFE (read-only) methods for all users (authenticated or not).
+        
+        return request.method in permissions.SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
-        # Only allow access to role model profiles with limited details
-        return obj.user_type == CustomUser.USER_TYPES["ROLE_MODEL_USER"]
-# ??  check this part 
+    
+        # Allow access only to role model profiles (user_type == 'ROLE_MODEL').
+        # Public users can see limited details.
+        # Registered users can see full details.
+        
+        if obj.user_type != "ROLE_MODEL":
+            # Deny access if the object is not a role model profile
+            return False
+
+        # Allow public (unauthenticated) users to see limited details
+        if not request.user.is_authenticated:
+            return True  # Public users can access SAFE methods with limited details
+
+        # Allow authenticated (registered) users to access the full profile
+        return True
+
 
 class IsRoleModelUser(permissions.BasePermission):
     """
