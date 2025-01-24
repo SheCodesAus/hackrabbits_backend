@@ -2,14 +2,12 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 # Create your models here.
-
-# Base User Model
 class CustomUser(AbstractUser):
-    USER_TYPES = {
-        "ADMIN": "Admin",
-        "ROLE_MODEL": "Role Model",
-        "COMMUNITY_USER": "Community User",
-    }
+    USER_TYPES = (
+        ("ADMIN", "Admin"),
+        ("ROLE_MODEL", "Role Model"),
+        ("COMMUNITY_USER", "Community User"),
+    )
     user_type = models.CharField(max_length=20, choices=USER_TYPES) # Do we need a default user here?
     # first_name = models.CharField(max_length=50) --- included in AbstractUser model
     # last_name = models.CharField(max_length=50)
@@ -19,97 +17,90 @@ class CustomUser(AbstractUser):
     inspiration = models.TextField(blank=True, null=True)
     advice = models.TextField(blank=True, null=True)
 
-    LOCATIONS = {
-        "PERTH": "Perth",
-        "ADELAIDE": "Adelaide",
-        "MELBOURNE": "Melbourne",
-        "HOBART": "Hobart",
-        "CANBERRA": "Canberra",
-        "SYDNEY": "Sydney",
-        "BRISBANE": "Brisbane",
-        "DARWIN": "Darwin",
-    }
-    location = models.CharField(max_length=100, choices=LOCATIONS)
+    # Many to Many Fields for Categories
+    # Allows users to choose multiple Categories (using a checkbox for example)
+    categories = models.ManyToManyField('Category', blank=True)
+
+    # Using CHOICES option here so that users only have one choice each for Industries and Locations
+    INDUSTRIES = (
+        ("EDUCATION", "Education"),
+        ("HEALTHCARE", "Healthcare"),
+        ("CYBER_SECURITY", "Cyber Security"),
+        ("SOFTWARE_ENGINEERING", "Software Engineering"),
+        ("DATA_SCIENCE", "Data Science"),
+        ("FINANCE", "Finance"),
+        ("AI", "AI"),
+        ("ENERGY", "Energy"),
+        ("TRANSPORTATION", "Transportation"),
+        ("VIDEO_GAME_DEV", "Video Game Development"),
+        ("GOVERNMENT", "Government"),
+        ("MEDIA_ENTERTAINMENT", "Media & Entertainment"),
+        ("STARTUP", "Startup"),
+        ("NON_PROFIT", "Non-Profit"),
+    )
+    industry = models.CharField(max_length=100, choices=INDUSTRIES, default="SOFTWARE_ENGINEERING")
+
+    LOCATIONS = (
+        ("PERTH", "Perth"),
+        ("ADELAIDE", "Adelaide"),
+        ("MELBOURNE", "Melbourne"),
+        ("HOBART", "Hobart"),
+        ("CANBERRA", "Canberra"),
+        ("SYDNEY", "Sydney"),
+        ("BRISBANE", "Brisbane"),
+        ("DARWIN", "Darwin"),
+    )
+    location = models.CharField(max_length=100, choices=LOCATIONS, default="PERTH")
 
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     # email = models.EmailField(unique=True) --- included in AbstractUser model
     linkedin = models.URLField(blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
+    # ROLE MODEL FIELDS ONLY (but still within CustomUser class)
+    # Note the Many to Many Field for Skills
+    # Like Categories above, this allows users to choose multiple Skills (using a checkbox for example)
+    milestones = models.TextField(blank=True, null=True)
+    achievements = models.TextField(blank=True, null=True)
+    skills = models.ManyToManyField('Skill', blank=True)
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.user_type})"
 
-# ALL USER DATA
 
-# Categories
+
+# Skills and Categories models so that both fields inside the CustomUser model can have multiple values stored when a user signs up
+# aka - A user can select multiple skills and/or categories during the sign-up process 
+
+# Category Model
 class Category(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
-class UserCategory(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_categories")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="category_users")
-
-# Industries
-class Industry(models.Model):
-    name = models.CharField(max_length=100)
-    badge_icon = models.URLField(blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-class UserIndustry(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_industries")
-    industry = models.ForeignKey(Industry, on_delete=models.CASCADE, related_name="industry_users")
-
-# Locations
-class Location(models.Model):
-    city = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.city
-
-class UserLocation(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_locations")
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="location_users")
-
-# ROLE MODEL SPECIFIC DATA
-
-# Milestones
-class Milestone(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    milestone_date = models.DateField()
-
-    def __str__(self):
-        return self.name
-
-class UserMilestone(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_milestones")
-    milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE, related_name="milestone_users")
-
-# Achievements
-class Achievement(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-class UserAchievement(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_achievements")
-    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE, related_name="achievement_users")
-
-# Skills
+# Skill Model
 class Skill(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
-class UserSkill(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user_skills")
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="skill_users")
+
+# # Call this function manually after running migrations
+# add_predefined_data()
+
+
+# How the above works:
+# Steps in the Process:
+# 1. When the add_predefined_data() function is called, it populates the database with predefined categories and skills.
+
+# 2. During the user sign-up process, the user is presented with options to select multiple categories and skills.
+
+# 3. Once the user selects their desired categories and skills, those selections are saved in the CustomUser model's categories and skills fields, which are ManyToManyField relationships.
+
+# 4. Django takes care of associating the selected categories and skills with the user in the appropriate join tables.
+
+
 
 
