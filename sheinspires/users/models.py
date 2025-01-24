@@ -29,7 +29,7 @@ class CustomUser(AbstractUser):
 
     # Many to Many Fields for Categories
     # Allows users to choose multiple Categories (using a checkbox for example)
-    categories = models.ManyToManyField('Category', blank=True)
+    categories = models.ManyToManyField('Category', blank=True, null=True)
 
     # Using CHOICES option here so that users only have one choice each for Industries and Locations
     INDUSTRIES = (
@@ -64,7 +64,6 @@ class CustomUser(AbstractUser):
         ("DARWIN", "Darwin"),
     )
     location = models.CharField(max_length=100, choices=LOCATIONS, blank=True,
-    null=True,
     # default="PERTH"
     )
 
