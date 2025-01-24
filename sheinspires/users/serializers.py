@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Category, Skill
 
 class RoleModelSerializer(serializers.ModelSerializer):
-    categories = serializers.StringRelatedField(many=True)
-    skills = serializers.StringRelatedField(many=True)
+    categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())
+    skills = serializers.PrimaryKeyRelatedField(many=True, queryset=Skill.objects.all())
+
     class Meta:
         model = CustomUser
         fields = '__all__'
@@ -19,6 +20,12 @@ class RoleModelSerializer(serializers.ModelSerializer):
         return user
 
 #BS added create method first exclude many to many fields from validated user after it's created they both set and be a part of the user
+# BS: changed the catergories and skills fields to be able to handle many-to-many as they can't done by drf automatically, need customisation
+# `PrimaryKeyRelatedField` allows the serializer to accept a list of primary keys for the related objects.
+# The `queryset` ensures that only valid `Category` and `Skill` objects can be assigned to a user.
+# The `many=True` parameter indicates that multiple related objects can be provided in the request.
+# These fields will only validate the input and are handled separately in the `create` method for assignment.
+
 
 class CommunityUserSerializer(serializers.ModelSerializer):
     class Meta:
