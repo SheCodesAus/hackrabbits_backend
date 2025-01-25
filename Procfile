@@ -1,2 +1,2 @@
-release: python crowdfunding/manage.py migrate
-web: gunicorn --pythonpath crowdfunding crowdfunding.wsgi --log-file -
+release: python sheinspires/manage.py migrate
+web: gunicorn --pythonpath sheinspires sheinspires.wsgi --log-file -
