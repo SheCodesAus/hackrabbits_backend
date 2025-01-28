@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Category, Skill
+from .models import CustomUser, Category, Skill, Invitation
 
 class RoleModelSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all(), required=False)
@@ -49,3 +49,24 @@ class CommunityUserSerializer(serializers.ModelSerializer):
 
         return CustomUser.objects.create_user(**validated_data)
     
+class InvitationSerializer(serializers.ModelSerializer):
+    fullName = serializers.CharField(source='full_name')
+    currentRole = serializers.CharField(source='current_role')
+    whyInspiring = serializers.CharField(source='why_inspiring')
+
+    class Meta:
+        model = Invitation
+        fields = ['fullName', 'email', 'industry', 'currentRole', 'whyInspiring']
+
+    def create(self, validated_data):
+        # Convert camelCase to snake_case
+        full_name = validated_data.pop('full_name')
+        current_role = validated_data.pop('current_role')
+        why_inspiring = validated_data.pop('why_inspiring')
+        
+        return Invitation.objects.create(
+            full_name=full_name,
+            current_role=current_role,
+            why_inspiring=why_inspiring,
+            **validated_data
+        )

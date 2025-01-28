@@ -117,6 +117,26 @@ class Skill(models.Model):
     def __str__(self):
         return self.name
 
+class Invitation(models.Model):
+    INDUSTRY_CHOICES = [
+        ('SOFTWARE_ENGINEERING', 'Software Engineering'),
+        ('EDUCATION', 'Education'),
+        ('HEALTHCARE', 'Healthcare'),
+        ('BUSINESS', 'Business'),
+        ('ARTS', 'Arts'),
+        ('OTHER', 'Other'),
+    ]
+
+    # Change field names to snake_case
+    full_name = models.CharField(max_length=255)  # Changed from fullName
+    email = models.EmailField()
+    industry = models.CharField(max_length=50, choices=INDUSTRY_CHOICES)
+    current_role = models.CharField(max_length=255)  # Changed from currentRole
+    why_inspiring = models.TextField()  # Changed from whyInspiring
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Invitation for {self.fullName} ({self.email})"
 
 # # Call this function manually after running migrations
 # add_predefined_data()

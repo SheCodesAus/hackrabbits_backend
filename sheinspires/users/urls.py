@@ -21,7 +21,8 @@
 
 
 from django.urls import path
-from . import views
+from . import views 
+from .views import SendInvitationView
 
 urlpatterns = [
     # Role Model Sign-Up and Profile Creation
@@ -50,4 +51,7 @@ urlpatterns = [
 
     # Token Authentication (Login/Validate User)
     path('api-token-auth/', views.CustomAuthToken.as_view(), name='api_token_auth'),
+
+    # Invitations
+    path('invitations/send', SendInvitationView.as_view(), name='send-invitation'),
 ]
