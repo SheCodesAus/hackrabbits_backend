@@ -29,6 +29,10 @@ class PublicRoleModelListView(APIView):
                 "last_name": user.last_name,
                 "image": user.image,
                 "current_role": user.current_role,
+                "industry": user.industry,  
+                "location": user.location,  
+                "skills": user.skills,  
+                
             }
             return Response(limited_data, status=status.HTTP_200_OK)
         else:
@@ -41,6 +45,10 @@ class PublicRoleModelListView(APIView):
                     "last_name": user.last_name,
                     "image": user.image,
                     "current_role": user.current_role,
+                    "location": user.location,  
+                    "industry": user.industry,  
+                    "skills": user.skills  
+
                 }
                 for user in users
             ]
