@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import RegexValidator
+import uuid
+from django.utils import timezone
+from datetime import timedelta
 
 
 # Create your models here.
@@ -137,6 +140,39 @@ class Invitation(models.Model):
     
     def __str__(self):
         return f"Invitation for {self.fullName} ({self.email})"
+    
+def get_default_expiry():
+    return timezone.now() + timedelta(days=7)
+class Invitation(models.Model):
+    INDUSTRY_CHOICES = [
+        ('SOFTWARE_ENGINEERING', 'Software Engineering'),
+        ('EDUCATION', 'Education'),
+        ('HEALTHCARE', 'Healthcare'),
+        ('BUSINESS', 'Business'),
+        ('ARTS', 'Arts'),
+        ('OTHER', 'Other'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField()
+    full_name = models.CharField(max_length=255)
+    industry = models.CharField(max_length=100, choices=INDUSTRY_CHOICES)
+    current_role = models.CharField(max_length=255)
+    why_inspiring = models.TextField()
+    token = models.UUIDField(default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_accepted = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'invitations'
+
+    def __str__(self):
+        return f"Invitation for {self.full_name} ({self.email})"
+
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expires_at
 
 # # Call this function manually after running migrations
 # add_predefined_data()

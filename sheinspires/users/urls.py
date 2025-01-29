@@ -26,32 +26,32 @@ from .views import SendInvitationView
 
 urlpatterns = [
     # Role Model Sign-Up and Profile Creation
-    path('role-model/signup/', views.FullRoleModelView.as_view(), name='role_model_signup'),
-
+    path('role-models/', views.FullRoleModelView.as_view(), name='full_role_models'),
+    
     # Community User Sign-Up and Profile Creation
     path('community-user/signup/', views.CommunityUserView.as_view(), name='community_user_signup'),
-
+    
     # Public Role Model Profiles (Limited View)
     path('role-models/public/', views.PublicRoleModelListView.as_view(), name='public_role_models'),
-
+    
     # Public Role Model Profiles details (Limited View)
     path('role-models/public/<int:pk>/', views.PublicRoleModelListView.as_view(), name='public_role_model_detail'),
-
-    # Full Role Model Profiles (For Authenticated Users)
-    path('role-models/', views.FullRoleModelView.as_view(), name='full_role_models'),
-
+    
     # Role Model Profile Detail (View, Update, Delete)
     path('role-models/<int:pk>/', views.RoleModelDetail.as_view(), name='role_model_detail'),
-
+    
     # Community User Profiles List (For Role Models)
     path('community-users/', views.CommunityUserView.as_view(), name='community_user_list'),
-
+    
     # Community User Profile Detail (View, Update, Delete)
     path('community-users/<int:pk>/', views.CommunityUserDetail.as_view(), name='community_user_detail'),
-
+    
     # Token Authentication (Login/Validate User)
     path('api-token-auth/', views.CustomAuthToken.as_view(), name='api_token_auth'),
-
+    
     # Invitations
-    path('invitations/send', SendInvitationView.as_view(), name='send-invitation'),
+    path('invitations/send', views.SendInvitationView.as_view(), name='send-invitation'),
+    
+    # Role Model Signup (with invitation)
+    path('role-model/signup/', views.FullRoleModelView.as_view(), name='role_model_signup'),
 ]

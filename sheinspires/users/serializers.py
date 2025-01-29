@@ -1,5 +1,10 @@
 from rest_framework import serializers
 from .models import CustomUser, Category, Skill, Invitation
+from django.core.validators import EmailValidator
+from django.utils import timezone
+from datetime import timedelta
+import uuid
+
 
 class RoleModelSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all(), required=False)
@@ -29,6 +34,40 @@ class RoleModelSerializer(serializers.ModelSerializer):
 # These fields will only validate the input and are handled separately in the `create` method for assignment.
 
 
+class InvitationSerializer(serializers.ModelSerializer):
+    fullName = serializers.CharField(source='full_name')
+    currentRole = serializers.CharField(source='current_role')
+    whyInspiring = serializers.CharField(source='why_inspiring')
+
+    class Meta:
+        model = Invitation
+        fields = ['fullName', 'email', 'industry', 'currentRole', 'whyInspiring']
+
+    def validate_whyInspiring(self, value):
+        if len(value) < 20:
+            raise serializers.ValidationError("Please provide a more detailed response (minimum 20 characters)")
+        return value
+
+    def create(self, validated_data):
+        # Convert camelCase to snake_case
+        full_name = validated_data.pop('full_name')
+        current_role = validated_data.pop('current_role')
+        why_inspiring = validated_data.pop('why_inspiring')
+        
+        # Generate token and expiration
+        token = uuid.uuid4()
+        expires_at = timezone.now() + timedelta(days=7)
+        
+        return Invitation.objects.create(
+            full_name=full_name,
+            current_role=current_role,
+            why_inspiring=why_inspiring,
+            token=token,
+            expires_at=expires_at,
+            is_accepted=False,
+            **validated_data
+        )
+
 class CommunityUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -48,25 +87,8 @@ class CommunityUserSerializer(serializers.ModelSerializer):
         validated_data['user_type'] = "COMMUNITY_USER"
 
         return CustomUser.objects.create_user(**validated_data)
-    
-class InvitationSerializer(serializers.ModelSerializer):
-    fullName = serializers.CharField(source='full_name')
-    currentRole = serializers.CharField(source='current_role')
-    whyInspiring = serializers.CharField(source='why_inspiring')
 
-    class Meta:
-        model = Invitation
-        fields = ['fullName', 'email', 'industry', 'currentRole', 'whyInspiring']
-
-    def create(self, validated_data):
-        # Convert camelCase to snake_case
-        full_name = validated_data.pop('full_name')
-        current_role = validated_data.pop('current_role')
-        why_inspiring = validated_data.pop('why_inspiring')
-        
-        return Invitation.objects.create(
-            full_name=full_name,
-            current_role=current_role,
-            why_inspiring=why_inspiring,
-            **validated_data
-        )
+# Note:
+# We can use the role model profile view to get a list of role models for our role model cards to display on the homepage - no need for a secondary url for 'all users'
+# aka = 'rolemodelprofile/<int:pk>/'
+# instead of = 'users/'
