@@ -38,7 +38,7 @@ class CommunityUserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},  # Ensure password is write-only
             'first_name': {'required': True},
             'last_name': {'required': True},
-            'image': {'required': True},
+            # 'image': {'required': True},
             'current_role': {'required': True},
             'location': {'required': True},
         }
