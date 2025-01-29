@@ -44,6 +44,8 @@ class PublicRoleModelListView(APIView):
                     "last_name": user.last_name,
                     "image": user.image,
                     "current_role": user.current_role,
+                    "location": user.location,
+                    "industry": user.industry
                 }
                 for user in users
             ]
