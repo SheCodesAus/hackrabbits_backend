@@ -10,7 +10,8 @@ from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser
 
 from rest_framework import generics, permissions
 
-
+from .serializers import InvitationSerializer
+from rest_framework.permissions import AllowAny
 
 
 class PublicRoleModelListView(APIView):
@@ -205,7 +206,16 @@ class CustomAuthToken(ObtainAuthToken):
           'email': user.email
       })
   
-
+class SendInvitationView(APIView):
+    def post(self, request):
+        serializer = InvitationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Invitation sent successfully"},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
       
