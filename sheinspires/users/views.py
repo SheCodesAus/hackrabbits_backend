@@ -11,6 +11,9 @@ from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser
 from rest_framework import generics, permissions
 
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class PublicRoleModelListView(APIView):
@@ -132,11 +135,16 @@ class CommunityUserView(APIView):
 
 
     def post(self, request):
+        logger.info(f"Received signup request: {request.data}")  # Log request data
+
         # Allow unauthenticated users to sign up
         serializer = CommunityUserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user_type="COMMUNITY_USER")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        logger.error(f"Signup failed: {serializer.errors}")  # Log validation errors
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
