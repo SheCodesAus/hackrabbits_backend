@@ -1,37 +1,55 @@
 from rest_framework import permissions
 from users.models import CustomUser
 
-
-
 class IsPublicOrReadOnly(permissions.BasePermission):
-    
-    #  Allow public (unauthenticated) users to view limited details of role model profiles.
-    #  Allow registered (authenticated) users to view the full profile of role model profiles.
-    #  Only role model profiles (user_type == 'ROLE_MODEL') are accessible.
-
+    """
+    Allow public (unauthenticated) users to view limited details of role model profiles.
+    Allow registered (authenticated) users to view the full profile.
+    Only role model profiles (user_type == 'ROLE_MODEL') are accessible.
+    """
 
     def has_permission(self, request, view):
-        
-        #  Allow SAFE (read-only) methods for all users (authenticated or not).
-        
-        return request.method in permissions.SAFE_METHODS
+        # Allow GET requests for public users
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # Allow authenticated users to make other requests
+        return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-    
-        # Allow access only to role model profiles (user_type == 'ROLE_MODEL').
-        # Public users can see limited details.
-        # Registered users can see full details.
-        
+        # Allow public access only to role model profiles
         if obj.user_type != "ROLE_MODEL":
-            # Deny access if the object is not a role model profile
             return False
+        return True  # Authenticated users can view full details
 
-        # Allow public (unauthenticated) users to see limited details
-        if not request.user.is_authenticated:
-            return True  # Public users can access SAFE methods with limited details
+# class IsPublicOrReadOnly(permissions.BasePermission):
+    
+#     #  Allow public (unauthenticated) users to view limited details of role model profiles.
+#     #  Allow registered (authenticated) users to view the full profile of role model profiles.
+#     #  Only role model profiles (user_type == 'ROLE_MODEL') are accessible.
 
-        # Allow authenticated (registered) users to access the full profile
-        return True
+
+#     def has_permission(self, request, view):
+        
+#         #  Allow SAFE (read-only) methods for all users (authenticated or not).
+        
+#         return request.method in permissions.SAFE_METHODS
+
+#     def has_object_permission(self, request, view, obj):
+    
+#         # Allow access only to role model profiles (user_type == 'ROLE_MODEL').
+#         # Public users can see limited details.
+#         # Registered users can see full details.
+        
+#         if obj.user_type != "ROLE_MODEL":
+#             # Deny access if the object is not a role model profile
+#             return False
+
+#         # Allow public (unauthenticated) users to see limited details
+#         if not request.user.is_authenticated:
+#             return True  # Public users can access SAFE methods with limited details
+
+#         # Allow authenticated (registered) users to access the full profile
+#         return True
 
 
 class IsRoleModelUser(permissions.BasePermission):
