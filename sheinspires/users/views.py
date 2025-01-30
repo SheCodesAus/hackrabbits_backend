@@ -19,6 +19,7 @@ class PublicRoleModelListView(APIView):
         users = CustomUser.objects.filter(user_type="ROLE_MODEL")
         data = [
             {
+                "id": user.id,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "image": user.image,
@@ -43,6 +44,7 @@ class PublicRoleModelDetailView(APIView):
             raise Http404
 
         data = {
+            "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "image": user.image,
