@@ -31,7 +31,10 @@ class PublicRoleModelListView(APIView):
                 "current_role": user.current_role,
                 "industry": user.industry,  
                 "location": user.location,  
-                "skills": user.skills,  
+                "skills": list(user.skills.values_list('name', flat=True)),  
+                "industry": user.industry,  
+                "categories": list(user.categories.values_list('name', flat=True)),
+
                 
             }
             return Response(limited_data, status=status.HTTP_200_OK)
@@ -46,9 +49,9 @@ class PublicRoleModelListView(APIView):
                     "image": user.image,
                     "current_role": user.current_role,
                     "location": user.location,  
-                    # "industry": user.industry,  
-                    # "skills": user.skills  
-
+                    "skills": list(user.skills.values_list('name', flat=True)),  
+                    "industry": user.industry,  
+                    "categories": list(user.categories.values_list('name', flat=True)),
                 }
                 for user in users
             ]
@@ -109,7 +112,7 @@ class RoleModelDetail(APIView):
 
     def put(self, request, pk):
         user = self.get_object(pk)
-        serializer = RoleModelSerializer(user, data=request.data)
+        serializer = RoleModelSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

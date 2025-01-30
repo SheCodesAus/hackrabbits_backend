@@ -19,8 +19,8 @@ class CustomUser(AbstractUser):
     # first_name = models.CharField(max_length=50) --- included in AbstractUser model
     # last_name = models.CharField(max_length=50)
     
-    image = models.URLField(blank=True, null=True)  # URL to profile image
-    
+    # image = models.URLField(blank=True, null=True)  # URL to profile image
+    image = models.URLField(max_length=1000, blank=True, null=True)
     # tagline = models.CharField(max_length=100) --- do we want to include?
     
     current_role = models.CharField(max_length=100)
