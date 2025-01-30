@@ -11,51 +11,95 @@ from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser
 from rest_framework import generics, permissions
 
 
-
-
 class PublicRoleModelListView(APIView):
     permission_classes = [IsPublicOrReadOnly]
 
-    
-    def get(self, request, pk=None):
-        if pk:
-            # Fetch and return limited details for a single role model profile
-            try:
-                user = CustomUser.objects.get(pk=pk, user_type="ROLE_MODEL")
-            except CustomUser.DoesNotExist:
-                raise Http404
-            limited_data = {
+    def get(self, request):
+        # Fetch and return the list of all role models 
+        users = CustomUser.objects.filter(user_type="ROLE_MODEL").only(
+            'first_name', 'last_name', 'image', 'current_role', 'location', 'industry'
+        )
+        data = [
+            {
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "image": user.image,
                 "current_role": user.current_role,
-                "industry": user.industry,  
                 "location": user.location,  
                 "skills": list(user.skills.values_list('name', flat=True)),  
                 "industry": user.industry,  
                 "categories": list(user.categories.values_list('name', flat=True)),
+            }
+            for user in users
+        ]
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class PublicRoleModelDetailView(APIView):
+    permission_classes = [IsPublicOrReadOnly]
+
+    def get(self, request, pk):
+        # Fetch and return limited details for a single role model profile
+        try:
+            user = CustomUser.objects.get(pk=pk, user_type="ROLE_MODEL")
+        except CustomUser.DoesNotExist:
+            raise Http404
+
+        limited_data = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "image": user.image,
+            "current_role": user.current_role,
+            "industry": user.industry,  
+            "location": user.location,  
+            "skills": list(user.skills.values_list('name', flat=True)),  
+            "categories": list(user.categories.values_list('name', flat=True)),
+        }
+        return Response(limited_data, status=status.HTTP_200_OK)
+
+# class PublicRoleModelListView(APIView):
+#     permission_classes = [IsPublicOrReadOnly]
+
+    
+#     def get(self, request, pk=None):
+#         if pk:
+#             # Fetch and return limited details for a single role model profile
+#             try:
+#                 user = CustomUser.objects.get(pk=pk, user_type="ROLE_MODEL")
+#             except CustomUser.DoesNotExist:
+#                 raise Http404
+#             limited_data = {
+#                 "first_name": user.first_name,
+#                 "last_name": user.last_name,
+#                 "image": user.image,
+#                 "current_role": user.current_role,
+#                 "industry": user.industry,  
+#                 "location": user.location,  
+#                 "skills": list(user.skills.values_list('name', flat=True)),  
+#                 "industry": user.industry,  
+#                 "categories": list(user.categories.values_list('name', flat=True)),
 
                 
-            }
-            return Response(limited_data, status=status.HTTP_200_OK)
-        else:
+#             }
+#             return Response(limited_data, status=status.HTTP_200_OK)
+#         else:
 
-            # Fetch and return the list of all role models 
-            users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image', 'current_role')
-            data = [
-                {
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                    "image": user.image,
-                    "current_role": user.current_role,
-                    "location": user.location,  
-                    "skills": list(user.skills.values_list('name', flat=True)),  
-                    "industry": user.industry,  
-                    "categories": list(user.categories.values_list('name', flat=True)),
-                }
-                for user in users
-            ]
-            return Response(data, status=status.HTTP_200_OK)
+#             # Fetch and return the list of all role models 
+#             users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image', 'current_role')
+#             data = [
+#                 {
+#                     "first_name": user.first_name,
+#                     "last_name": user.last_name,
+#                     "image": user.image,
+#                     "current_role": user.current_role,
+#                     "location": user.location,  
+#                     "skills": list(user.skills.values_list('name', flat=True)),  
+#                     "industry": user.industry,  
+#                     "categories": list(user.categories.values_list('name', flat=True)),
+#                 }
+#                 for user in users
+#             ]
+#             return Response(data, status=status.HTTP_200_OK)
 
 
 
