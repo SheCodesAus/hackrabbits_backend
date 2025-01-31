@@ -168,7 +168,7 @@ class RoleModelDetail(APIView):
     def delete(self, request, pk):
         user = self.get_object(pk)
         user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "Rolemodel user deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
 
 # View to create and retrieve a Community User Profile
@@ -226,7 +226,7 @@ class CommunityUserDetail(APIView):
     def delete(self, request, pk):
         user = self.get_object(pk)
         user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
 
 # View to retrieve details of a Profile using a primary key
