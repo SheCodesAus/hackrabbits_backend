@@ -28,33 +28,29 @@ class PublicRoleModelListView(APIView):
                 "skills": list(user.skills.values_list('name', flat=True)),  
                 "industry": user.industry,  
                 "categories": list(user.categories.values_list('name', flat=True)),
+
+                
             }
-            for user in users
-        ]
-        return Response(data, status=status.HTTP_200_OK)
+            return Response(limited_data, status=status.HTTP_200_OK)
+        else:
 
-
-class PublicRoleModelDetailView(APIView):
-    permission_classes = [IsPublicOrReadOnly]
-
-    def get(self, request, pk):
-        try:
-            user = CustomUser.objects.get(pk=pk, user_type="ROLE_MODEL")
-        except CustomUser.DoesNotExist:
-            raise Http404
-
-        data = {
-            "id": user.id,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "image": user.image,
-            "current_role": user.current_role,
-            "industry": user.industry,  
-            "location": user.location,  
-            "skills": list(user.skills.values_list('name', flat=True)),  
-            "categories": list(user.categories.values_list('name', flat=True)),
-        }
-        return Response(data, status=status.HTTP_200_OK)
+            # Fetch and return the list of all role models 
+            users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image', 'current_role')
+            data = [
+                {
+                    "id": user.id,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "image": user.image,
+                    "current_role": user.current_role,
+                    "location": user.location,  
+                    "skills": list(user.skills.values_list('name', flat=True)),  
+                    "industry": user.industry,  
+                    "categories": list(user.categories.values_list('name', flat=True)),
+                }
+                for user in users
+            ]
+            return Response(data, status=status.HTTP_200_OK)
 
 
 # BS. I thought maybe one endpoint with the logic to handle pk is throwing error for heroku log so i seperated this class but the problem was not this. 
