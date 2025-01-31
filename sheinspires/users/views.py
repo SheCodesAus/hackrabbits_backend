@@ -11,19 +11,68 @@ from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser
 from rest_framework import generics, permissions
 
 
+# class PublicRoleModelListView(APIView):
+#     permission_classes = [IsPublicOrReadOnly]
+
+#     def get(self, request):
+#         # Fetch all public role models
+#         users = CustomUser.objects.filter(user_type="ROLE_MODEL")
+#         data = [
+#             {
+#                 "id": user.id,
+#                 "first_name": user.first_name,
+#                 "last_name": user.last_name,
+#                 "image": user.image,
+#                 "current_role": user.current_role,
+#                 "location": user.location,  
+#                 "skills": list(user.skills.values_list('name', flat=True)),  
+#                 "industry": user.industry,  
+#                 "categories": list(user.categories.values_list('name', flat=True)),    
+#             }
+#                ]
+        
+#         return Response(limited_data, status=status.HTTP_200_OK)
+#     else:
+
+#             # Fetch and return the list of all role models 
+#             users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image', 'current_role')
+#             data = [
+#                 {
+#                     "id": user.id,
+#                     "first_name": user.first_name,
+#                     "last_name": user.last_name,
+#                     "image": user.image,
+#                     "current_role": user.current_role,
+#                     "location": user.location,  
+#                     "skills": list(user.skills.values_list('name', flat=True)),  
+#                     "industry": user.industry,  
+#                     "categories": list(user.categories.values_list('name', flat=True)),
+#                 }
+#                 for user in users
+#             ]
+#             return Response(data, status=status.HTTP_200_OK)
+
+
+# BS. I thought maybe one endpoint with the logic to handle pk is throwing error for heroku log so i seperated this class but the problem was not this. 
+# BS will keep this code just in case, it's working fine on local server so the logic is ok! 
+
 class PublicRoleModelListView(APIView):
     permission_classes = [IsPublicOrReadOnly]
 
-    def get(self, request):
-        # Fetch all public role models
-        users = CustomUser.objects.filter(user_type="ROLE_MODEL")
-        data = [
-            {
-                "id": user.id,
+    
+    def get(self, request, pk=None):
+        if pk:
+            # Fetch and return limited details for a single role model profile
+            try:
+                user = CustomUser.objects.get(pk=pk, user_type="ROLE_MODEL")
+            except CustomUser.DoesNotExist:
+                raise Http404
+            limited_data = {
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "image": user.image,
                 "current_role": user.current_role,
+                "industry": user.industry,  
                 "location": user.location,  
                 "skills": list(user.skills.values_list('name', flat=True)),  
                 "industry": user.industry,  
@@ -38,7 +87,6 @@ class PublicRoleModelListView(APIView):
             users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image', 'current_role')
             data = [
                 {
-                    "id": user.id,
                     "first_name": user.first_name,
                     "last_name": user.last_name,
                     "image": user.image,
@@ -51,54 +99,6 @@ class PublicRoleModelListView(APIView):
                 for user in users
             ]
             return Response(data, status=status.HTTP_200_OK)
-
-
-# BS. I thought maybe one endpoint with the logic to handle pk is throwing error for heroku log so i seperated this class but the problem was not this. 
-# BS will keep this code just in case, it's working fine on local server so the logic is ok! 
-
-#  class PublicRoleModelListView(APIView):
-#     permission_classes = [IsPublicOrReadOnly]
-
-    
-#     def get(self, request, pk=None):
-#         if pk:
-#             # Fetch and return limited details for a single role model profile
-#             try:
-#                 user = CustomUser.objects.get(pk=pk, user_type="ROLE_MODEL")
-#             except CustomUser.DoesNotExist:
-#                 raise Http404
-#             limited_data = {
-#                 "first_name": user.first_name,
-#                 "last_name": user.last_name,
-#                 "image": user.image,
-#                 "current_role": user.current_role,
-#                 "industry": user.industry,  
-#                 "location": user.location,  
-#                 "skills": list(user.skills.values_list('name', flat=True)),  
-#                 "industry": user.industry,  
-#                 "categories": list(user.categories.values_list('name', flat=True)),
-
-                
-#             }
-#             return Response(limited_data, status=status.HTTP_200_OK)
-#         else:
-
-#             # Fetch and return the list of all role models 
-#             users = CustomUser.objects.filter(user_type="ROLE_MODEL").only('first_name', 'last_name', 'image', 'current_role')
-#             data = [
-#                 {
-#                     "first_name": user.first_name,
-#                     "last_name": user.last_name,
-#                     "image": user.image,
-#                     "current_role": user.current_role,
-#                     "location": user.location,  
-#                     "skills": list(user.skills.values_list('name', flat=True)),  
-#                     "industry": user.industry,  
-#                     "categories": list(user.categories.values_list('name', flat=True)),
-#                 }
-#                 for user in users
-#             ]
-#             return Response(data, status=status.HTTP_200_OK)
 
 
 
