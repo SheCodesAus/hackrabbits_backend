@@ -57,7 +57,10 @@ class PublicRoleModelDetailView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-# class PublicRoleModelListView(APIView):
+# BS. I thought maybe one endpoint with the logic to handle pk is throwing error for heroku log so i seperated this class but the problem was not this. 
+# BS will keep this code just in case, it's working fine on local server so the logic is ok! 
+
+#  class PublicRoleModelListView(APIView):
 #     permission_classes = [IsPublicOrReadOnly]
 
     
