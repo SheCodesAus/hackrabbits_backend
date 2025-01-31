@@ -1,25 +1,45 @@
 from rest_framework import permissions
 from users.models import CustomUser
 
+
+
+
+
 class IsPublicOrReadOnly(permissions.BasePermission):
     """
-    Allow public (unauthenticated) users to view limited details of role model profiles.
-    Allow registered (authenticated) users to view the full profile.
+    Allows unauthenticated (public) users to access GET requests only.
     Only role model profiles (user_type == 'ROLE_MODEL') are accessible.
     """
 
     def has_permission(self, request, view):
-        # Allow GET requests for public users
+        # Allow everyone (including unauthenticated users) to perform GET requests
         if request.method in permissions.SAFE_METHODS:
             return True
-        # Allow authenticated users to make other requests
-        return request.user and request.user.is_authenticated
+        return False  # Deny other request methods (e.g., POST, PUT, DELETE)
 
     def has_object_permission(self, request, view, obj):
-        # Allow public access only to role model profiles
-        if obj.user_type != "ROLE_MODEL":
-            return False
-        return True  # Authenticated users can view full details
+        # Ensure only ROLE_MODEL profiles are accessible
+        return obj.user_type == "ROLE_MODEL"
+
+# class IsPublicOrReadOnly(permissions.BasePermission):
+#     """
+#     Allow public (unauthenticated) users to view limited details of role model profiles.
+#     Allow registered (authenticated) users to view the full profile.
+#     Only role model profiles (user_type == 'ROLE_MODEL') are accessible.
+#     """
+
+#     def has_permission(self, request, view):
+#         # Allow GET requests for public users
+#         if request.method in permissions.SAFE_METHODS:
+#             return True
+#         # Allow authenticated users to make other requests
+#         return request.user and request.user.is_authenticated
+
+#     def has_object_permission(self, request, view, obj):
+#         # Allow public access only to role model profiles
+#         if obj.user_type != "ROLE_MODEL":
+#             return False
+#         return True  # Authenticated users can view full details
 
 # class IsPublicOrReadOnly(permissions.BasePermission):
     
