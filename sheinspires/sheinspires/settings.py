@@ -38,7 +38,10 @@ SECRET_KEY = os.environ.get(
 #     'DJANGO_DEBUG'
 # ) != 'False'
 
-DEBUG = True
+# DEBUG = True
+DEBUG = os.environ.get(
+    'DJANGO_DEBUG'
+) != 'False'
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
@@ -110,6 +113,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 # DATABASE_URL = os.getenv('DATABASE_URL')
 # if DATABASE_URL:
