@@ -78,8 +78,9 @@ class PublicRoleModelListView(APIView):
                 "skills": list(user.skills.values_list('name', flat=True)),  
                 "industry": user.industry,  
                 "categories": list(user.categories.values_list('name', flat=True)),
+                "email" : user.email
 
-                
+                #BS added email temporary on the public, as for testing in react It will not be showing to public. 
             }
             return Response(limited_data, status=status.HTTP_200_OK)
         else:
