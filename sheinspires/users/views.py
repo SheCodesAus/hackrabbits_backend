@@ -6,7 +6,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import CustomUser
 from .serializers import RoleModelSerializer, CommunityUserSerializer
-from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser
+from .permissions import IsPublicOrReadOnly, IsRoleModelUser, IsCommunityUser, IsSuperUser
 
 from rest_framework import generics, permissions
 
@@ -138,7 +138,7 @@ class RoleModelDetail(APIView):
     # every registered user can see full details of role model profile
 # each role model can see their own profile and every role model profile out there
 # each role model can create, edit , delete their own profile, also admin can do delete their profile
-    permission_classes = [IsRoleModelUser]
+    permission_classes = [IsRoleModelUser| IsSuperUser]
 
 
     def get_object(self, pk):
@@ -198,7 +198,7 @@ class CommunityUserDetail(APIView):
 # role model user can view each community user profile
 # each community user only can see their own profile, can create, edit or delete it 
 # also admin can do this.
-    permission_classes = [IsCommunityUser]
+    permission_classes = [IsCommunityUser| IsSuperUser]
 
     def get_object(self, pk):
         try:

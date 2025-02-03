@@ -1,7 +1,6 @@
 from rest_framework import permissions
 from users.models import CustomUser
-
-
+from rest_framework.permissions import BasePermission, IsAdminUser
 
 
 
@@ -116,3 +115,15 @@ class IsCommunityUser(permissions.BasePermission):
         
         # Allow viewing all role model profiles
         return obj.user_type == "ROLE_MODEL"
+
+
+
+
+class IsSuperUser(BasePermission):
+    """
+    Custom permission that allows only superusers to delete users.
+    """
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_superuser
+
